@@ -39,6 +39,13 @@ export default function HomeHero() {
     setIsCreateWalletModalOpen(false);
     navigate("/", { replace: "true" });
   };
+
+  const handleOpenAccessWalletModal = () => setIsAccessWalletModalOpen(true);
+
+  const handleCloseAccessWalletModal = () => {
+    setIsAccessWalletModalOpen(false);
+    navigate("/", { replace: "true" });
+  };
   
   return (
     <Wrapper>
