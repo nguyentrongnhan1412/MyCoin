@@ -1,27 +1,27 @@
-import { Box, Link, Stack, styled } from "@mui/material";
+import { Box, Link, Stack} from "@mui/material";
 
-const Wrapper = styled(({ ...props }) => <Box {...props} />)({
+const wrapperStyle = {
   width: "100%",
   backgroundColor: "#184f90",
-});
+};
 
-const Container = styled(({ ...props }) => <Stack {...props} />)({
+const containerStyle = {
   maxWidth: "1185px",
   padding: "32px 12px 12px 12px",
   margin: "0 auto",
-});
+};
 
 export default function HomeHeader() {
   return (
-    <Wrapper>
-      <Container>
+    <Box sx={wrapperStyle}>
+      <Stack sx={containerStyle}>
         <Link href="/">
+          
           <Box
             sx={{
               maxWidth: "130px",
               maxHeight: "36px",
-            }}
-          >
+            }}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 402 114">
               <circle cx="57.33" cy="57" r="54" fill="#1896a4" />
               <path
@@ -30,8 +30,10 @@ export default function HomeHeader() {
               />
             </svg>
           </Box>
+  
         </Link>
-      </Container>
-    </Wrapper>
+        
+      </Stack>
+    </Box>
   );
 }

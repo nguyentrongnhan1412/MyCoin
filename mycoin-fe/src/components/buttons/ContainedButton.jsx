@@ -1,4 +1,4 @@
-import { Button, styled } from "@mui/material";
+import { Button, buttonClasses, styled } from "@mui/material";
 
 export default styled(({ ...props }) => (
   <Button {...props} variant="contained" />
@@ -17,4 +17,10 @@ export default styled(({ ...props }) => (
       "linear-gradient(0deg,rgba(255,255,255,.08),rgba(255,255,255,.08)),#05c0a5!important",
     boxShadow: "none",
   },
+
+  [`&.${buttonClasses.disabled}`]: {
+    color: "white",
+    borderColor: "transparent",
+  },
+  
 });
