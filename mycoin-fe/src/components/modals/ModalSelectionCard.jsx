@@ -8,7 +8,7 @@ import {
   
   const cardStyle = {
     height: "160px",
-    border: "1px solid rgb(242, 243, 246)",
+    border: "1px solid rgb(215, 218, 227)",
     borderRadius: "10px",
     textTransform: "capitalize",
     boxShadow: "none",
@@ -18,6 +18,7 @@ import {
     height: "100%",
     display: "flex",
     flexDirection: "row-reverse",
+    justifyContent: "space-between",
     padding: "0 20px",
   
     "&:hover, &:focus": {
@@ -39,7 +40,7 @@ import {
   };
 
 
-  export default function CreateWalletModalSelectionCard({imagePath,imageAlt,title,description,onClick,}) {
+  export default function ModalSelectionCard({imagePath,imageAlt,title,description,onClick,}) {
     return (
       <Card sx={cardStyle}>
         <CardActionArea sx={cardActionAreaStyle} onClick={onClick}>

@@ -1,7 +1,9 @@
 import { Stack } from "@mui/material";
+import { useContext } from "react";
+import { StepperContext } from "../../../../contexts/StepperContext";
 import ContainedButton from "../../../buttons/ContainedButton";
 import OutlinedButton from "../../../buttons/OutlinedButton";
-import CreateWalletModalStepHeader from "../CreateWalletModalStepHeader";
+import ModalStepHeader from "../../ModalStepHeader";
 import KeystoreFileImportantThingCard from "./KeystoreFileImportantThingCard";
 
 const importantThings = [
@@ -28,16 +30,27 @@ const importantThings = [
 ];
 
 export default function DownloadKeystoreFileStep() {
+  const { handleNext, handleBack } = useContext(StepperContext);
+
+  const handleOnClickBackButton = () => {
+    handleBack();
+  };
+
+  const handleOnClickAcknowledgeButton = () => {
+    handleNext();
+  };
+
   return (
     <Stack spacing={3}>
-      <CreateWalletModalStepHeader
+      <ModalStepHeader
         headline="STEP 2."
         title="Download keystore file"
-        description=" Important things to know before downloading your keystore file. "
-      />
+        description=" Important things to know before downloading your keystore file. "/>
+
       <Stack flexDirection="row" justifyContent="space-between">
         {importantThings.map(thing => (
           <KeystoreFileImportantThingCard
+            key={thing.title}
             imagePath={thing.imagePath}
             imageAlt={thing.imageAlt}
             title={thing.title}
@@ -50,10 +63,12 @@ export default function DownloadKeystoreFileStep() {
           style={{
             marginRight: "8px",
           }}
-        >
+          onClick={handleOnClickBackButton}>
           Back
         </OutlinedButton>
-        <ContainedButton>Acknowledge & Download</ContainedButton>
+        <ContainedButton onClick={handleOnClickAcknowledgeButton}>
+          Acknowledge & Download
+        </ContainedButton>
       </Stack>
     </Stack>
   );

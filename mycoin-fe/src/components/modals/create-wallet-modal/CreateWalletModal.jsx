@@ -1,12 +1,12 @@
-import { IconButton, Modal, Paper, Typography } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Modal, Paper, Typography } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
-import CreateWalletModalHeader from "./CreateWalletModalHeader";
-import CreateWalletModalPaper from "./CreateWalletModalPaper";
-import CreateWalletModalBody from "./CreateWalletModalBody";
-import CreateWalletModalSelectionCard from "./CreateWalletModalSelectionCard";
-import CreateWalletModalStepper from "./CreateWalletModalStepper";
-import CreateWalletUsingKeystoreStepper from "./create-wallet-using-keystore/CreateWalletUsingKeystoreStepper";
+import ModalHeader from "../ModalHeader";
+import ModalPaper from "../ModalPaper";
+import ModalBody from "../ModalBody";
+import ModalSelectionCard from "../ModalSelectionCard";
+import CreateWalletUsingKeystore from "./create-wallet-using-keystore/CreateWalletUsingKeystore";
+import ModalCloseButton from "../ModalCloseButton";
+import ModalBackButton from "../ModalBackButton";
 
 const wrapperStyle = {
   position: "relative",
@@ -23,7 +23,13 @@ export default function CreateWalletModal({ open, handleClose }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleOnClickCard = queryValue => {
-    setSearchParams(`type=${queryValue}`, {
+    setSearchParams(`createType=${queryValue}`, {
+      replace: true,
+    });
+  };
+
+  const handleBack = () => {
+    setSearchParams("", {
       replace: true,
     });
   };
@@ -36,8 +42,8 @@ export default function CreateWalletModal({ open, handleClose }) {
       aria-describedby="create-wallet-modal-description"
     >
       <Paper sx={wrapperStyle}>
-        <CreateWalletModalPaper>
-          <CreateWalletModalHeader>
+        <ModalPaper>
+          <ModalHeader>
             
             <Typography
               id="create-wallet-modal-title"
@@ -45,33 +51,24 @@ export default function CreateWalletModal({ open, handleClose }) {
               fontWeight={700}>
                 {searchParams.toString().endsWith("keystore") ? "Create Wallet with Keystore File" : "Create wallet using software"}
             </Typography>
-
-          </CreateWalletModalHeader>
-
-          <CreateWalletModalBody>
-            {searchParams.toString().endsWith("keystore") ? (<CreateWalletUsingKeystoreStepper />) : (
-            <CreateWalletModalSelectionCard
+          </ModalHeader>
+          
+          <ModalBody>
+            {searchParams.toString().endsWith("keystore") ? (<CreateWalletUsingKeystore/>) : (
+            <ModalSelectionCard
                 onClick={() => handleOnClickCard("keystore")}
                 imagePath="/images/create-wallet/icon-keystore-file.svg"
                 imageAlt="icon-keystore"
                 title="Keystore file"
                 description="Using a keystore file online makes your wallet more vulnerable to
             loss of funds. We don't recommend this method of wallet creation."/>)}
-          </CreateWalletModalBody>
+          </ModalBody>
 
+        </ModalPaper>
 
-        </CreateWalletModalPaper>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "16px",
-            right: "16px",
-          }}
-          onClick={handleClose}
-          aria-label="close"
-          size="large">
-          <CloseIcon />
-        </IconButton>
+        <ModalCloseButton handleClose={handleClose} />
+        {searchParams.toString() !== "" && (
+        <ModalBackButton handleBack={handleBack} />)}
       </Paper>
     </Modal>
   );
