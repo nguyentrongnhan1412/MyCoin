@@ -4,6 +4,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
   
@@ -62,6 +63,11 @@ const list = [
       icon: <ArrowCircleUpIcon/>,
       label: "Send",
       section: "send",
+    },
+    {
+      icon: <PendingActionsIcon/>,
+      label: "Pending transactions",
+      section: "pendingTransactions",
     },
     {
       icon: <DashboardIcon/>,
