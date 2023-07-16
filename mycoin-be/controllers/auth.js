@@ -10,8 +10,22 @@ export const createPassword = async (req, res) => {
     res
       .status(200)
       .json({ fileName: keystoreFilename, fileContent: keystoreFileContent });
-  } catch (error) {
-    console.log(error);
+  } 
+  catch (error) {
+    console.error(error);
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const accessWallet = async (req, res) => {
+  try {
+    const wallet = await Wallet["default"].fromV3(
+      req.body.keystore,
+      req.body.password,
+    );
+    res.status(200).json({ publicKey: wallet.getPublicKeyString() });
+  } 
+  catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
