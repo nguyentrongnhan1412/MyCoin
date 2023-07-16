@@ -1,5 +1,6 @@
 import { Stack } from "@mui/material";
 import { useContext } from "react";
+import { CreateWalletUsingKeystoreContext } from "../../../../contexts/CreateWalletUsingKeystoreContext";
 import { StepperContext } from "../../../../contexts/StepperContext";
 import ContainedButton from "../../../buttons/ContainedButton";
 import OutlinedButton from "../../../buttons/OutlinedButton";
@@ -30,6 +31,8 @@ const importantThings = [
 ];
 
 export default function DownloadKeystoreFileStep() {
+  const { file, downloadLink } = useContext(CreateWalletUsingKeystoreContext);
+  console.log(file);
   const { handleNext, handleBack } = useContext(StepperContext);
 
   const handleOnClickBackButton = () => {
@@ -66,8 +69,11 @@ export default function DownloadKeystoreFileStep() {
           onClick={handleOnClickBackButton}>
           Back
         </OutlinedButton>
+        
         <ContainedButton onClick={handleOnClickAcknowledgeButton}>
-          Acknowledge & Download
+          <a download={file} href={downloadLink}>
+            Acknowledge & Download
+          </a>
         </ContainedButton>
       </Stack>
     </Stack>

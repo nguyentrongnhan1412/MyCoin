@@ -23,4 +23,9 @@ export default styled(({ ...props }) => (
     borderColor: "transparent",
   },
   
+  a: {
+    color: "white",
+    textDecoration: "none",
+  },
+  
 });
