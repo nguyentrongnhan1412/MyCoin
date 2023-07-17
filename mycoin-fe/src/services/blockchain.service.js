@@ -1,4 +1,4 @@
-import Blockchain from "../classes/BlockChain";
+import Blockchain from "../classes/Blockchain";
 
 export class BlockchainService {
   blockchainInstance = new Blockchain();
@@ -49,6 +49,10 @@ export class BlockchainService {
 
   getDifficulty() {
     return this.blockchainInstance.difficulty;
+  }
+
+  getWalletAddress() {
+    return this.wallet.signingKeyObj.getPublic("hex");
   }
   
 }

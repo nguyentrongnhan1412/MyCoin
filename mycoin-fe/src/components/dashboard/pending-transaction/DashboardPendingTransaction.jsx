@@ -13,7 +13,7 @@ const cellStyle = {
 };
     
 export default function DashboardPendingTransaction() {
-  const { blockchainService } = useContext(MainContext);
+  const { blockchainService, networkService } = useContext(MainContext);
   const pendingTxs = blockchainService.getPendingTransactions();
 
     return (
@@ -54,7 +54,7 @@ export default function DashboardPendingTransaction() {
         <Box marginTop={3}>
 
           <ContainedButton
-            onClick={() => blockchainService.minePendingTransactions()}>
+            onClick={() => networkService.minePendingTransactions()}>
             Start mining
           </ContainedButton>
 

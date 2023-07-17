@@ -2,20 +2,25 @@ import socketIoClient from "socket.io-client";
 import Peer from "simple-peer";
 import Transaction from "../classes/Transaction";
 import Block from "../classes/Block";
+import Blockchain from "../classes/Blockchain";
+import { MintService } from "./mint.service";
 
 // using send method for data transfer
 
-export class ConnectionService {
+export class NetworkService {
   peers = {};
   ws = null;
   address = "";
+  mintService = null;
   blockchainService = null;
   check = [];
   checked = [];
   checking = false;
+  tempChain = new Blockchain();
 
-  constructor(blockchainService) {
+  constructor(mintService, blockchainService) {
     this.blockchainService = blockchainService;
+    this.mintService = mintService;
     this.ws = socketIoClient(process.env.REACT_APP_API);
 
     this.ws.on("me", id => {
@@ -28,13 +33,35 @@ export class ConnectionService {
 
     this.ws.on("openedSockets", socketAddresses => {
       socketAddresses.forEach(address => this.handshake(address));
-      this.blockchainService.minePendingTransactions();
-      // this.sendMessage(
-      //   this.produceMessage("TYPE_REPLACE_CHAIN", [
-      //     this.blockchainService.getLatestBlock(),
-      //     this.blockchainService.getDifficulty(),
-      //   ]),
-      // );
+
+      setTimeout(() => {
+        const message = this.produceMessage("TYPE_REQUEST_CHAIN", this.address);
+        this.sendMessage(message);
+      }, 2000);
+
+      // setTimeout(() => {
+      //   const message = this.produceMessage("TYPE_REQUEST_INFO", this.address);
+      //   this.sendMessage(message);
+      // }, 3000);
+
+      setTimeout(() => {
+        const transaction = new Transaction(
+          MintService.MINT_PUBLIC_ADDRESS,
+          this.blockchainService.getWalletAddress(),
+          10,
+        );
+
+        transaction.signTransaction(MintService.MINT_KEY_PAIR);
+
+        const message = this.produceMessage(
+          "TYPE_CREATE_TRANSACTION",
+          transaction,
+        );
+
+        this.sendMessage(message);
+        this.blockchainService.addTransaction(transaction);
+      }, 10000);
+
     });
 
     this.ws.on("receiveSignal", ({ from, data }) => {
@@ -84,6 +111,16 @@ export class ConnectionService {
     this.createPeer(address, false);
   }
 
+  minePendingTransactions() {
+    this.blockchainService.minePendingTransactions();
+    this.sendMessage(
+      this.produceMessage("TYPE_REPLACE_CHAIN", [
+        this.blockchainService.getLatestBlock(),
+        this.blockchainService.getDifficulty(),
+      ]),
+    );
+  }
+
   handlePeerData(data) {
     const message = JSON.parse(data);
 
@@ -97,33 +134,29 @@ export class ConnectionService {
         this.replaceChainHandler(newBlock, newDiff);
         break;
       case "TYPE_REQUEST_CHECK":
-        this.requestCheckHandler();
+        this.requestCheckHandler(message.data);
         break;
       case "TYPE_SEND_CHECK":
         if (this.checking) this.check.push(message.data);
         break;
-      case "TYPE_SEND_CHAIN": //
-        const { block, finished } = message.data;
+      case "TYPE_SEND_CHAIN":
+        let { block, finished } = message.data;
+        block = Block.copy(block);
         this.sendChainHandler(block, finished);
         break;
-
       case "TYPE_REQUEST_CHAIN":
         this.requestChainHandler(message.data);
         break;
-
       case "TYPE_REQUEST_INFO":
-        opened
-          .filter(node => node.address === _message.data)[0]
-          .socket.send("TYPE_SEND_INFO", [
-            JeChain.difficulty,
-            JeChain.transactions,
-          ]);
-
+        this.peers[message.data].send("TYPE_SEND_INFO", [
+          this.blockchainService.getDifficulty(),
+          this.blockchainService.getPendingTransactions(),
+        ]);
         break;
-
       case "TYPE_SEND_INFO":
-        [JeChain.difficulty, JeChain.transactions] = _message.data;
-
+        const [difficulty, pendingTransactions] = message.data;
+        this.blockchainService.blockchainInstance.difficulty = difficulty;
+        this.blockchainService.blockchainInstance.pendingTransactions = pendingTransactions;
         break;
     }
   }
@@ -133,8 +166,8 @@ export class ConnectionService {
     this.blockchainService.addTransaction(transaction);
   }
 
-  requestCheckHandler() {
-    this.peers[message.data].send(
+  requestCheckHandler(messageData) {
+    this.peers[messageData].send(
       JSON.stringify(
         this.produceMessage(
           "TYPE_SEND_CHECK",
@@ -150,20 +183,22 @@ export class ConnectionService {
 
   sendChainHandler(block, finished) {
     if (!finished) {
-      tempChain.chain.push(block);
+      this.tempChain.chain.push(block);
     } else {
-      tempChain.chain.push(block);
-      if (Blockchain.isValid(tempChain)) {
-        JeChain.chain = tempChain.chain;
+      this.tempChain.chain.push(block);
+
+      if (Blockchain.isValid(this.tempChain)) {
+        this.blockchainService.blockchainInstance.chain = this.tempChain.chain;
       }
-      tempChain = new Blockchain();
+
+      this.tempChain = new Blockchain();
+      
     }
   }
 
   requestChainHandler(messageData) {
     const peer = this.peers[messageData];
 
-    // We will send the blocks continously.
     for (
       let i = 1;
       i < this.blockchainService.blockchainInstance.chain.length;
@@ -171,10 +206,9 @@ export class ConnectionService {
     ) {
       peer.send(
         JSON.stringify(
-          produceMessage("TYPE_SEND_CHAIN", {
+          this.produceMessage("TYPE_SEND_CHAIN", {
             block: this.blockchainService.blockchainInstance.chain[i],
-            finished:
-              i === this.blockchainService.blockchainInstance.chain.length - 1,
+            finished: i === this.blockchainService.getLatestBlockPosition(),
           }),
         ),
       );
@@ -190,7 +224,7 @@ export class ConnectionService {
 
     const theirTx = [
       ...newBlock.transactions
-        .filter(tx => tx.from !== null)
+        .filter(tx => tx.fromAddress !== MintService.MINT_PUBLIC_ADDRESS)
         .map(tx => JSON.stringify(tx)),
     ];
 
@@ -222,7 +256,7 @@ export class ConnectionService {
         parseInt(newBlock.timestamp) >
           parseInt(this.blockchainService.getLatestBlock().timestamp) &&
         parseInt(newBlock.timestamp) < Date.now() &&
-        this.blockchainService.getLatestBlock().hash === newBlock.prevHash &&
+        this.blockchainService.getLatestBlock().hash === newBlock.previousHash &&
         (newDiff + 1 === this.blockchainService.getDifficulty() ||
           newDiff - 1 === this.blockchainService.getDifficulty())
       ) {
@@ -235,14 +269,14 @@ export class ConnectionService {
     } else if (
       !this.checked.includes(
         JSON.stringify([
-          newBlock.prevHash,
+          newBlock.previousHash,
           this.blockchainService.getLaterBlock().timestamp || "",
         ]),
       )
     ) {
       this.checked.push(
         JSON.stringify([
-          this.blockchainService.getLatestBlock().prevHash,
+          this.blockchainService.getLatestBlock().previousHash,
           this.blockchainService.getLaterBlock().timestamp || "",
         ]),
       );
