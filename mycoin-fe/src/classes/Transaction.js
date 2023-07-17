@@ -2,7 +2,23 @@ import EC from "elliptic";
 import crypto from "crypto";
 
 export default class Transaction {
-    constructor(fromAddress, toAddress, amount) {
+  static copy(obj) {
+    if (obj) {
+      return Object.assign(new Transaction(), obj);
+    }
+  }
+
+  static isValid(tx, chain) {
+    return (
+      tx.fromAddress &&
+      tx.toAddress &&
+      tx.amount &&
+      chain.getBalanceOfAddress(tx.fromAddress) >= tx.amount &&
+      tx.isValid()
+    );
+  }
+    
+  constructor(fromAddress, toAddress, amount) {
       this.fromAddress = fromAddress;
       this.toAddress = toAddress;
       this.amount = amount;
@@ -10,6 +26,7 @@ export default class Transaction {
       this.hash = this.calculateHash();
     }
   
+    
     calculateHash() {
       return crypto
         .createHash("sha256")
