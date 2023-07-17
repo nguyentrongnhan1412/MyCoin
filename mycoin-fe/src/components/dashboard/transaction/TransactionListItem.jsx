@@ -28,9 +28,9 @@ const chipWrapperStyle = {
     marginLeft: "auto",
 };
   
-export default function TransactionListItem() {
+export default function TransactionListItem({txHash, fromAddress, toAddress, amount}) {
     return (
-      <ListItem key={`item-`}>
+      <ListItem>
 
         <ListItemIcon>
           <Avatar>Avatar</Avatar>
@@ -41,7 +41,7 @@ export default function TransactionListItem() {
             primary={
               <Typography>
                 <Link href="#" underline="none">
-                  Lorem ipsum
+                  {txHash}
                 </Link>
               </Typography>
             }
@@ -54,9 +54,10 @@ export default function TransactionListItem() {
             primary={
               <Typography>
                 From{" "}
+                {fromAddress ? (
                 <Link href="#" underline="none">
-                  Lorem ipsum
-                </Link>
+                  {fromAddress}
+                </Link>) : ("System")}
               </Typography>
             }
             sx={normalTextStyle}/>
@@ -66,7 +67,7 @@ export default function TransactionListItem() {
               <Typography>
                 To{" "}
                 <Link href="#" underline="none">
-                  Lorem ipsum
+                  {toAddress}
                 </Link>
               </Typography>
             }
@@ -74,7 +75,7 @@ export default function TransactionListItem() {
         </Box>
 
         <Box sx={chipWrapperStyle}>
-          <Chip label="0 LMAO" />
+        <Chip label={`${amount} LMAO`}/>
         </Box>
       </ListItem>
     );

@@ -1,9 +1,13 @@
+import EC from "elliptic";
+import crypto from "crypto";
+
 export default class Transaction {
     constructor(fromAddress, toAddress, amount) {
       this.fromAddress = fromAddress;
       this.toAddress = toAddress;
       this.amount = amount;
       this.timestamp = Date.now();
+      this.hash = this.calculateHash();
     }
   
     calculateHash() {
@@ -21,8 +25,7 @@ export default class Transaction {
         throw new Error("You cannot sign transactions for other wallets!");
       }
   
-      const hashTx = this.calculateHash();
-      const sig = signingKey.sign(hashTx, "base64");
+      const sig = signingKey.sign(this.hash, "base64");
   
       this.signature = sig.toDER("hex");
     }
@@ -37,7 +40,9 @@ export default class Transaction {
       if (!this.signature || this.signature.length === 0) {
         throw new Error("No signature in this transaction");
       }
-  
+      
+      const ec = new EC.ec("secp256k1");
+      
       const publicKey = ec.keyFromPublic(this.fromAddress, "hex");
       return publicKey.verify(this.calculateHash(), this.signature);
     }

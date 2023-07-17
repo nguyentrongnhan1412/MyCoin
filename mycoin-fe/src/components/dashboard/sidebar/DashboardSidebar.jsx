@@ -123,7 +123,7 @@ export default function DashboardSidebar() {
               onClick={() => handleClickListItem(item.section)}
               selected={currentSection === item.section}
               sx={listItemStyle}
-              key={item.name}>
+              key={item.label}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText sx={listItemTextStyle} primary={item.label} />
             </ListItemButton>
