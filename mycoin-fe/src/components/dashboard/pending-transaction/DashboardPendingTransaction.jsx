@@ -52,7 +52,12 @@ export default function DashboardPendingTransaction() {
           </Table>
         </TableContainer>
         <Box marginTop={3}>
-          <ContainedButton>Start mining</ContainedButton>
+
+          <ContainedButton
+            onClick={() => blockchainService.minePendingTransactions()}>
+            Start mining
+          </ContainedButton>
+
         </Box>
       </DashboardContent>
     );

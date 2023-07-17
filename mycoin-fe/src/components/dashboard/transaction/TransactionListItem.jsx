@@ -1,4 +1,4 @@
-import {Avatar,Box,Chip,Link,ListItem,ListItemIcon,ListItemText,Typography,typographyClasses,} from "@mui/material";
+import {Avatar,Box,Chip,Link,ListItem,ListItemIcon,ListItemText, listItemTextClasses, Typography,typographyClasses,} from "@mui/material";
   
 const smallTextStyle = {
     [`& .${typographyClasses.root}`]: {
@@ -15,17 +15,27 @@ const normalTextStyle = {
   
 const transactionIdWrapperStyle = {
     maxWidth: "425px",
-    whiteSpace: "nowrap",
     overflow: "hidden",
-    textOverflow: "ellipsis",
+
+    [`& .${typographyClasses.root}`]: {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
 };
   
 const addressesContainerStyle = {
     marginLeft: "35px",
-    maxWidth: "425px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    
+    [`& .${listItemTextClasses.root}`]: {
+      maxWidth: "425px",
+  
+      [`& .${typographyClasses.root}`]: {
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      },
+    },
 };
   
 const chipWrapperStyle = {
@@ -61,7 +71,7 @@ export default function TransactionListItem({txHash, fromAddress, toAddress, amo
                 {fromAddress ? (
                 <Link href="#" underline="none">
                   {fromAddress}
-                </Link>) : ("System")}
+                </Link>) : ("System (Block Reward)")}
               </Typography>
             }
             sx={normalTextStyle}/>
