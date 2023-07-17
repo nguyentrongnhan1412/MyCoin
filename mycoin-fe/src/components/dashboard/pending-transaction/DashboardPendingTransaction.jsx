@@ -1,38 +1,21 @@
-import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-  } from "@mui/material";
-  import ContainedButton from "../../buttons/ContainedButton";
-  import DashboardContent from "../DashboardContent";
-  import Paper from "../Paper";
+import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import { useContext } from "react";
+import { MainContext } from "../../../contexts/MainContext";
+import ContainedButton from "../../buttons/ContainedButton";
+import DashboardContent from "../DashboardContent";
+import Paper from "../Paper";
   
-  const cellStyle = {
+const cellStyle = {
     maxWidth: "250px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-  };
-  
-  function createData(index, from, to, amount, date) {
-    return { index, from, to, amount, date };
-  }
-  
-  const rows = [
-    createData(
-      "0",
-      "Sample From Address",
-      "Sample To Address",
-      24,
-      Date.now(),
-    ),
-  ];
-  
-  export default function DashboardPendingTransaction() {
+};
+    
+export default function DashboardPendingTransaction() {
+  const { blockchainService } = useContext(MainContext);
+  const pendingTxs = blockchainService.getPendingTransactions();
+
     return (
       <DashboardContent>
         <TableContainer component={Paper}>
@@ -47,22 +30,22 @@ import {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => (
+              {pendingTxs.map((tx, index) => (
                 <TableRow
-                  key={row.index}
+                  key={tx.hash}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.index}
+                    {index}
                   </TableCell>
                   <TableCell sx={cellStyle} align="right">
-                    {row.from}
+                    {tx.fromAddress}
                   </TableCell>
                   <TableCell sx={cellStyle} align="right">
-                    {row.to}
+                    {tx.toAddress}
                   </TableCell>
-                  <TableCell align="right">{row.amount}</TableCell>
-                  <TableCell align="right">{row.date}</TableCell>
+                  <TableCell align="right">{tx.amount}</TableCell>
+                  <TableCell align="right">{tx.timestamp}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -73,4 +56,4 @@ import {
         </Box>
       </DashboardContent>
     );
-  }
+}

@@ -17,9 +17,6 @@ export default class Transaction {
         .digest("hex");
     }
   
-    /**
-     * @param {string} signingKey
-     */
     signTransaction(signingKey) {
       if (signingKey.getPublic("hex") !== this.fromAddress) {
         throw new Error("You cannot sign transactions for other wallets!");
@@ -44,6 +41,6 @@ export default class Transaction {
       const ec = new EC.ec("secp256k1");
       
       const publicKey = ec.keyFromPublic(this.fromAddress, "hex");
-      return publicKey.verify(this.calculateHash(), this.signature);
+      return publicKey.verify(this.hash, this.signature);
     }
   }

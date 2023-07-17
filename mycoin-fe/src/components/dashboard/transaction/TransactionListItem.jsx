@@ -22,6 +22,10 @@ const transactionIdWrapperStyle = {
   
 const addressesContainerStyle = {
     marginLeft: "35px",
+    maxWidth: "425px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
 };
   
 const chipWrapperStyle = {
