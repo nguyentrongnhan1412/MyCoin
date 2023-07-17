@@ -1,12 +1,12 @@
 export const importantThings = [
     {
-      imagePath: "/images/create-wallet/important-things/icon-don't-lose-it.svg",
+      imagePath: "/images/create-wallet/important-things/icon-dont-lose-it.svg",
       imageAlt: "icon-don't-lose-it",
       title: "Don't lose it",
       description: "Be careful, it can not be recovered if you lose it.",
     },
     {
-      imagePath: "/images/create-wallet/important-things/icon-don't-share-it.svg",
+      imagePath: "/images/create-wallet/important-things/icon-dont-share-it.svg",
       imageAlt: "icon-don't-share-it",
       title: "Don't share it",
       description:
