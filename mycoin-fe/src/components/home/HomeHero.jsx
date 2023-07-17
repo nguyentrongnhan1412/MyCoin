@@ -79,14 +79,13 @@ export default function HomeHero() {
               open={isCreateWalletModalOpen}
               handleClose={handleCloseCreateWalletModal}
             />
-            <OutlinedButton>Access my wallet</OutlinedButton>
             <OutlinedButton onClick={handleOpenAccessWalletModal}>
               Access my wallet
             </OutlinedButton>
-
             <AccessWalletModal
               open={isAccessWalletModalOpen}
-              handleClose={handleCloseAccessWalletModal}/>
+              handleClose={handleCloseAccessWalletModal}
+            />
           </Stack>
         </Box>
         <HomeHeroImage />
