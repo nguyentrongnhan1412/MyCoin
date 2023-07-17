@@ -57,11 +57,6 @@ function App() {
               element={<DashboardPendingTransaction/>}
             />
 
-            <Route
-              path="/wallet/dashboard/transaction/:id"
-              element={<TransactionDetail/>}
-            />
-            
           </Route>
         </Route>
       </Routes>

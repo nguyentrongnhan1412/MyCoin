@@ -17,9 +17,10 @@ const valueStyle = {
     textOverflow: "ellipsis",
 };
   
-export default function BlockCard({no, hash, previousHash, nonce, timestamp}) {
+export default function BlockCard({no, hash, previousHash, nonce, timestamp, handleClick}) {
+
     return (
-      <Card variant="outlined">
+      <Card onClick={handleClick} variant="outlined">
         <CardContent>
           <Box sx={containerStyle}>
           <Typography fontWeight={700}>Block {no}</Typography>
